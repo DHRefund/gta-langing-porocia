@@ -6,7 +6,7 @@ const ComingSoon = () => {
 
         <div className="text-wrapper">
           <h3 className="gradient-title">
-            まも----なく <br /> 配信開始 <br /> 2026年5月26日
+            まもなく <br /> 配信開始 <br /> 2026年5月26日
             {/* Coming <br /> May 26th <br /> 2026 */}
           </h3>
         </div>

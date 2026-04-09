@@ -35,9 +35,8 @@
 /* } */
 
 @theme {
-  --font-sans: "Noto Sans JP", "M PLUS Rounded 1c", sans-serif;
-  --font-long: "Noto Sans JP", sans-serif;
-  --font-round-bold: "Noto Sans JP", sans-serif;
+  --font-noto: "Noto Sans JP", "M PLUS Rounded 1c", sans-serif;
+  --font-noto-bold: "Noto Sans JP", sans-serif;
   --font-sans: "Round", sans-serif;
   --font-long: "Long", sans-serif;
   --font-round-bold: "Round Bold", sans-serif;
@@ -203,11 +202,11 @@ main {
     }
   }
   .post-card {
-    @apply relative flex justify-center items-center pb-80 shadow-2xl border-amber-400 border;
+    @apply relative flex justify-center items-center pb-80 shadow-2xl;
 
-    /* .animated-gradient-bg {
+    .animated-gradient-bg {
       @apply absolute w-full md:h-[200vh] h-[220vh] left-0 xl:-bottom-1/2 md:-bottom-5/6;
-    } */
+    }
 
     .post-card-wrapper {
       @apply xl:mx-56 md:mx-12 mx-5 xl:h-[85vh] md:h-[45vh] h-[35vh] w-full flex justify-center items-center overflow-hidden relative;
@@ -225,16 +224,38 @@ main {
       }
     }
   }
-  .final {
+  /* .final {
     @apply relative h-dvh overflow-hidden;
 
     .final-content {
       @apply scale-110;
     }
+  } */
+
+  /* .final-message {
+    @apply absolute w-full h-dvh overflow-hidden z-50 opacity-100;
+  } */
+  /* Trong file CSS global */
+  .final-message {
+    @apply absolute w-full h-dvh overflow-hidden z-50 opacity-0;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 100%);
   }
 
-  .final-message {
-    @apply absolute w-full h-dvh overflow-hidden z-50 opacity-100;
+  /* Footer social icons - hover effect */
+  .final-message footer img {
+    @apply transition-all duration-300;
+  }
+  .final-message footer img:hover {
+    @apply opacity-100 scale-105;
+    filter: drop-shadow(0 0 8px rgba(255, 249, 203, 0.4));
+  }
+
+  /* Ảnh team - hover zoom nhẹ */
+  .final-message img[src*="final"] {
+    @apply transition-transform duration-500;
+  }
+  .final-message img[src*="final"]:hover {
+    transform: scale(1.03);
   }
   .car-showcase-section {
     @apply relative py-24 lg:py-32 overflow-hidden;
@@ -244,33 +265,46 @@ main {
     }
 
     .car-showcase-inner {
-      @apply relative grid gap-10 items-center;
-      grid-template-columns: 1fr; /* Mobile: xếp dọc 1 cột */
+      @apply relative grid gap-10 items-stretch; /* ✅ items-stretch để con giãn hết chiều cao */
+      grid-template-columns: 1fr;
     }
 
     .car-stage {
       @apply w-full rounded-[2rem];
-      /* Giữ nguyên chiều cao linh hoạt đã set trong component */
     }
 
+    /* 📝 Cột nội dung - Căn chỉnh cho tiếng Nhật */
     .car-content {
-      @apply relative z-10 flex flex-col gap-6 text-center md:text-left;
+      @apply relative z-10 flex flex-col gap-6 text-center md:text-left md:items-start items-center justify-center px-2;
     }
 
+    /* 🏷️ Tiêu đề - Kết hợp font English + Japanese */
     .car-content__title {
-      @apply text-yellow font-round-bold uppercase md:text-5xl text-3xl leading-tight;
+      @apply text-yellow uppercase md:text-5xl text-3xl leading-tight tracking-wide;
+      font-family: "Noto Bold", "Noto Sans JP Bold", sans-serif;
+      text-shadow: 0 2px 10px rgba(255, 249, 203, 0.15); /* ✨ Glow nhẹ cho tiêu đề */
     }
 
+    /* 📄 Mô tả - Tối ưu cho chữ Nhật */
     .car-content__text {
-      @apply text-white md:text-lg text-base leading-8 max-w-2xl mx-auto md:mx-0;
+      @apply text-white/90 md:text-lg text-base max-w-2xl mx-auto md:mx-0;
+      font-family: "Noto Sans JP Regular", "Round", sans-serif;
+      line-height: 1.9; /* ✅ Line-height rộng cho chữ Nhật */
+      letter-spacing: 0.02em; /* ✅ Tracking nhẹ giúp chữ thoáng hơn */
+      text-align: justify; /* ✅ Căn đều 2 bên cho văn bản dài */
+      text-justify: inter-ideograph; /* ✅ Căn chỉnh chuẩn cho CJK */
     }
 
     /* 🖥️ Desktop Layout (≥ 1024px) */
     @media (min-width: 1024px) {
       .car-showcase-inner {
-        /* 7fr : 3fr ≈ 70% : 30% nhưng an toàn tuyệt đối với gap */
         grid-template-columns: minmax(380px, 7fr) minmax(280px, 3fr);
         gap: 2rem;
+      }
+
+      /* Desktop: căn text sát trái hơn để cân bằng với xe bên trái */
+      .car-content {
+        @apply md:pe-4;
       }
     }
   }

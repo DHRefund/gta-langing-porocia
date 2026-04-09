@@ -24,7 +24,7 @@ const PostCard = () => {
     <section className="post-card">
       <div className="animated-gradient-bg " />
 
-      <div className="post-card-wrapper group hover:rotate-1 hover:-[1.02] transition duration-700 border border-amber-600">
+      <div className="post-card-wrapper group hover:rotate-1 hover:-[1.02] transition duration-700 ">
         <img className="" src="/images/sapporo.jpg" />
         {/* <img src="/images/overlay.webp" /> */}
 
