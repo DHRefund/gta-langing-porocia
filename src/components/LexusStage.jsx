@@ -28,7 +28,7 @@ export default function LexusStage() {
       <Canvas
         style={{ width: "100%", height: "100%" }}
         // 👇 2. Quan trọng: Set alpha: true để Canvas trong suốt, lộ background của div cha
-        gl={{ alpha: true, preserveDrawingBuffer: true }}
+        gl={{ alpha: true, preserveDrawingBuffer: false }}
         camera={{ position: [4, 4, 7], fov: 45 }}
         frameloop="demand"
         dpr={[1, 1.5]}
@@ -45,7 +45,7 @@ export default function LexusStage() {
         <Lexus {...carProps} />
 
         {/* 🌑 Bóng đổ tiếp xúc */}
-        <ContactShadows position={[0, 0, 0]} opacity={0.6} scale={20} blur={1.5} />
+        <ContactShadows position={[0, 0, 0]} opacity={0.6} scale={10} blur={1} />
 
         {/* 🎮 Controls */}
         <OrbitControls
