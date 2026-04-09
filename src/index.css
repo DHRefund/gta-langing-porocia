@@ -203,11 +203,11 @@ main {
     }
   }
   .post-card {
-    @apply relative flex justify-center items-center pb-80 shadow-2xl;
+    @apply relative flex justify-center items-center pb-80 shadow-2xl border-amber-400 border;
 
-    .animated-gradient-bg {
+    /* .animated-gradient-bg {
       @apply absolute w-full md:h-[200vh] h-[220vh] left-0 xl:-bottom-1/2 md:-bottom-5/6;
-    }
+    } */
 
     .post-card-wrapper {
       @apply xl:mx-56 md:mx-12 mx-5 xl:h-[85vh] md:h-[45vh] h-[35vh] w-full flex justify-center items-center overflow-hidden relative;
@@ -239,35 +239,22 @@ main {
   .car-showcase-section {
     @apply relative py-24 lg:py-32 overflow-hidden;
 
-    /* &::before {
-      content: "";
-      @apply pointer-events-none absolute inset-0 opacity-70;
-      background-image:
-        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 30%),
-        linear-gradient(180deg, rgba(10, 10, 20, 0.2), transparent 55%);
-    } */
-
     .car-showcase-wrapper {
       @apply relative mx-auto px-5 xl:px-0 max-w-[1200px];
     }
 
     .car-showcase-inner {
       @apply relative grid gap-10 items-center;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr; /* Mobile: xếp dọc 1 cột */
     }
 
     .car-stage {
-      @apply w-full 
-      /* h-[15rem] md:h-[20rem]  */
-      rounded-[2rem]  bg-[#0606ec];
+      @apply w-full rounded-[2rem];
+      /* Giữ nguyên chiều cao linh hoạt đã set trong component */
     }
 
     .car-content {
-      @apply relative z-10 flex flex-col gap-6;
-    }
-
-    .car-content__eyebrow {
-      @apply uppercase text-pink tracking-[0.35em] text-sm;
+      @apply relative z-10 flex flex-col gap-6 text-center md:text-left;
     }
 
     .car-content__title {
@@ -275,17 +262,16 @@ main {
     }
 
     .car-content__text {
-      @apply text-white md:text-lg text-base leading-8 max-w-2xl;
+      @apply text-white md:text-lg text-base leading-8 max-w-2xl mx-auto md:mx-0;
     }
 
+    /* 🖥️ Desktop Layout (≥ 1024px) */
     @media (min-width: 1024px) {
       .car-showcase-inner {
-        grid-template-columns: minmax(380px, 55%) minmax(320px, 45%);
+        /* 7fr : 3fr ≈ 70% : 30% nhưng an toàn tuyệt đối với gap */
+        grid-template-columns: minmax(380px, 7fr) minmax(280px, 3fr);
+        gap: 2rem;
       }
-
-      /* .car-stage {
-        @apply h-[35rem];
-      } */
     }
   }
 }

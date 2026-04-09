@@ -7,27 +7,95 @@ Source: https://sketchfab.com/3d-models/2012-lexus-lfa-patrol-ff487de5fab54916b1
 Title: 2012 Lexus LFA - Patrol
 */
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useRef, useLayoutEffect } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 
 export function Lexus(props) {
   const { nodes, materials } = useGLTF("/models/lexus.glb");
+  const { gl } = useThree(); // Để truy cập renderer cho hiệu ứng phát sáng
 
-  // State lưu màu xe
-  const [carColor, setCarColor] = useState("#ff3366");
+  // 🎨 Array màu cơ bản để cycle qua khi click
+  const CAR_COLORS = useMemo(
+    () => [
+      "#ff3366", // Pink/Red
+      "#3366ff", // Blue
+      "#33ff66", // Green
+      "#ffcc33", // Yellow/Gold
+      "#cc33ff", // Purple
+      "#ffffff", // White
+      "#111111", // Black
+      "#ff6633", // Orange
+    ],
+    [],
+  );
+
+  // State quản lý màu: null = giữ màu gốc từ model, number = index trong array
+  const [colorIndex, setColorIndex] = useState(null);
+
+  // Xác định màu hiện tại
+  const currentCarColor = colorIndex === null ? undefined : CAR_COLORS[colorIndex];
+
+  // 🔄 Hàm xử lý click: Cycle qua các màu trong array
+  const handleCarClick = (e) => {
+    e.stopPropagation(); // Ngăn event bubbling
+    setColorIndex((prev) => {
+      if (prev === null) return 0; // Lần đầu click: chọn màu đầu tiên
+      return (prev + 1) % CAR_COLORS.length; // Cycle qua các màu tiếp theo
+    });
+  };
+
+  // 💡 Refs cho đèn để làm hiệu ứng phát sáng (bloom giả lập)
+  const headlightRefs = useRef([]);
+
+  // Hiệu ứng pulsing cho đèn (tăng giảm intensity nhẹ để tạo cảm giác "sống")
+  useLayoutEffect(() => {
+    let animationFrame;
+    const pulse = () => {
+      const time = Date.now() * 0.003;
+      const intensity = 2 + Math.sin(time) * 0.3; // Pulsing 1.7 ~ 2.3
+
+      headlightRefs.current.forEach((mesh) => {
+        if (mesh?.material) {
+          mesh.material.emissiveIntensity = intensity;
+        }
+      });
+      animationFrame = requestAnimationFrame(pulse);
+    };
+    pulse();
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
   return (
     <group {...props} dispose={null}>
-      <group scale={0.9}>
+      <group scale={1.3}>
+        {/* --- Các mesh giữ nguyên --- */}
         <mesh geometry={nodes.COPM_Tire_Highcar_lexus_lfa_2012_Mesh_lod0_tire_0.geometry} material={materials.tire} />
         <mesh geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_Rim_High_rim_0.geometry} material={materials.material} />
         <mesh
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_Opaque_AluminiumSmooth_High_ALUM_0.geometry}
           material={materials.ALUM}
         />
+
+        {/* --- 🚨 ĐÈN TRƯỚC: Thêm emissive + ref để phát sáng --- */}
         <mesh
+          ref={(el) => (headlightRefs.current[0] = el)}
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_Lightcluster_High_Light_Map_0.geometry}
           material={materials.Light_Map}
+          material-emissive="#ffffff" // Màu phát sáng: trắng
+          material-emissiveIntensity={2} // Độ sáng emissive
         />
+
+        {/* Đèn phụ/refracted - cũng làm phát sáng */}
+        <mesh
+          ref={(el) => (headlightRefs.current[1] = el)}
+          geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_LightRefracted_High_REF_0.geometry}
+          material={materials.material_17}
+          material-emissive="#ffffff"
+          material-emissiveIntensity={1.5}
+        />
+
+        {/* --- Các mesh khác giữ nguyên --- */}
         <mesh
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_LicensePlate_High_plate_0.geometry}
           material={materials.plate}
@@ -85,29 +153,26 @@ export function Lexus(props) {
           material={materials.orange_glass}
         />
         <mesh
-          geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_LightRefracted_High_REF_0.geometry}
-          material={materials.material_17}
-        />
-        <mesh
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_InternalTiled_High_carbon_0.geometry}
           material={materials.carbon}
         />
+
+        {/* --- 🎨 THÂN XE: Đổi màu khi click --- */}
         <mesh
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_Paint_Metal_High_LIV_0.geometry}
           material={materials.material_18}
-          material-color={carColor} //← Đổi màu dynamic
-          onClick={(e) => {
-            e.stopPropagation(); // Ngăn event bubbling
-            setCarColor((prev) => (prev === "#ff3366" ? "#3366ff" : "#ff3366"));
-          }}
+          material-color={currentCarColor} // ← Dynamic color (undefined = giữ màu gốc)
+          onClick={handleCarClick} // ← Click để cycle màu
           onPointerOver={(e) => {
             e.stopPropagation();
-            document.body.style.cursor = "pointer"; // Đổi cursor thành hand
+            document.body.style.cursor = "pointer";
           }}
           onPointerOut={(e) => {
             document.body.style.cursor = "auto";
           }}
         />
+
+        {/* --- Các mesh còn lại giữ nguyên --- */}
         <mesh
           geometry={nodes.COPcar_lexus_lfa_2012_Mesh_lod0M_CopProps_High_COPProps_0.geometry}
           material={materials.COPProps}
